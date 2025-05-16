@@ -4,10 +4,14 @@ RUN	apt update -y && apt upgrade -y && apt install mariadb-server -y
 
 COPY	conf/50-server.cnf /etc/mysql/mariadb.conf.d/.
 
-COPY	script.sh .
+COPY	tools/script.sh .
 
-RUN	mkdir /run/mysqld && chmod a+x script.sh
+RUN	mkdir -p /run/mysqld && chmod a+x script.sh
 
 RUN	chown -R mysql:mysql /var/lib/mysql /var/run/mysqld
 
-CMD	["./script.sh"]
+EXPOSE	3306
+
+ENTRYPOINT	["./script.sh"]
+
+#CMD	["./script.sh"]

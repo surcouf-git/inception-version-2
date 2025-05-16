@@ -4,15 +4,43 @@ services:
   nginx:
     build: requirements/nginx/.
     container_name: nginx
-    ports:
-      - "80:80"
     volumes:
       - ./web:/var/www/html
+    networks:
+      - inception_network
+    ports:
+      - "443:443"
   wordpress:
       build: requirements/wordpress/.
       container_name: wp-php
       volumes:
         - ./web:/var/www/html
+      networks:
+        - inception_network
+      env_file:
+        - .env
   mariadb:
     build: requirements/mariadb/.
     container_name: mariadb
+    volumes:
+      - db_data:/var/lib/mysql
+    networks:
+      - inception_network
+    env_file:
+      - .env
+volumes:
+  db_data:
+    driver: local
+    driver_opts:
+      type: none
+      device: /home/${USER}/data/db
+      o: bind
+  wp_data:
+    driver: local
+    driver_opts:
+      type: none
+      device: /home/${USER}/data/wordpress
+      o: bind
+networks:
+  inception_network:
+    driver: bridge
